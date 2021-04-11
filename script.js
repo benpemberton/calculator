@@ -37,8 +37,8 @@ buttons.forEach(node => node.addEventListener('click', input));
 function input(e) {
     let buttonValue = e.currentTarget.getAttribute('data-value');
     let buttonClass = e.currentTarget.getAttribute('class');
-    if (buttonClass === 'button function') {
-        runFunction(buttonValue);
+    if (buttonClass === 'button function' || buttonClass === 'button operator') {
+        runFunction(buttonValue, buttonClass);
     } else {
         printDisplay(buttonValue, buttonClass);
     }
@@ -55,15 +55,37 @@ function printDisplay (buttonValue, buttonClass) {
     displayValues = screenDisplay.innerHTML;
 }
 
-function runFunction(type) {
-    if (type === 'equals') {
+function runFunction(buttonValue, buttonClass) {
+    if (buttonValue === 'equals') {
         convertDisplayValues();
+    } else if (buttonClass === 'button operator') {
+        let currentExpression = displayValues.split(' ');
+        currentExpression = currentExpression.trim();
+        console.log(currentExpression);
+        if (currentExpression.length === 1) {
+            printDisplay(buttonValue, buttonClass);
+        } else if (isNaN(Number(currentExpression[1])) && typeof Number(currentExpression[2]) === 'number') {
+            convertDisplayValues();
+            printDisplay(buttonValue, buttonClass);
+        } else if (currentExpression.length === 2) {
+            replaceOperator(buttonValue);
+        }
     }
 }
 
+function replaceOperator(buttonValue) {
+    let currentExpression = displayValues.split(' ');
+    currentExpression.splice(-1, 1);
+    let newOperatorExpression = currentExpression.splice(-1, 1, buttonValue);
+    console.log(newOperatorExpression);
+    newOperatorExpression = newOperatorExpression.join(' ');
+    screenDisplay.innerHTML = newOperatorExpression;
+}
+
 function convertDisplayValues() {
+    console.log('runnign');
     let valuesArray = displayValues.split(' ');
-    let firstValue = valuesArray[0];
+    let firstValue = Number(valuesArray[0]);
     valuesArray.splice(0, 1);
     operationPairs = valuesArray.reduce((array, currentItem, i) => {
         if (isNaN(Number(currentItem))) {
@@ -76,11 +98,10 @@ function convertDisplayValues() {
             total = firstValue;
         }
         let nextValue = Number(currentItem[1]);
-        let currentValue = total;
         
-        if (currentItem[0] === '&#247') {
+        if (currentItem[0] === '÷') {
             return total = operate(divide, total, nextValue);
-        } else if (currentItem[0] === 'x') {
+        } else if (currentItem[0] === '×') {
             return total = operate(multiply, total, nextValue);
         } else if (currentItem[0] === '-') {
             return total = operate(subtract, total, nextValue);
@@ -88,23 +109,5 @@ function convertDisplayValues() {
             return total = operate(add, total, nextValue);
         }
     }, 0);
-    console.log(calculation);
-}
-
-function currentOperator(item) {
-    switch(currentItem[0]) {
-        case '&#247':
-            console.log('yea');
-            return operate(divide, firstValue, nextValue)
-        case 'x':
-            console.log('yeah');
-            operate(multiply, firstValue, nextValue)
-            break;
-        case '-':
-            operate(subtract, firstValue, nextValue)
-            break;
-        case '+':
-            operate(add, firstValue, nextValue)
-            break;
-    }
+    screenDisplay.innerHTML = calculation;
 }
