@@ -40,49 +40,46 @@ function input(e) {
     if (buttonClass === 'button function' || buttonClass === 'button operator') {
         runFunction(buttonValue, buttonClass);
     } else {
-        printDisplay(buttonValue, buttonClass);
+        printDisplay(buttonValue);
     }
 }
 
-function printDisplay (buttonValue, buttonClass) {
-    if (buttonValue === '.') {
-        screenDisplay.innerHTML += buttonValue;
-    } else if (buttonClass === 'button operator') {
-        screenDisplay.innerHTML += ` ${buttonValue} `;
-    } else {
-        screenDisplay.innerHTML += buttonValue;
-    }
+function printDisplay (buttonValue) {
+    screenDisplay.innerHTML += buttonValue;
     displayValues = screenDisplay.innerHTML;
 }
 
 function runFunction(buttonValue, buttonClass) {
     if (buttonValue === 'equals') {
-        convertDisplayValues();
+        calculateDisplayValues();
     } else if (buttonClass === 'button operator') {
-        let currentExpression = displayValues.split(' ');
-        currentExpression = currentExpression.trim();
-        console.log(currentExpression);
+        let currentExpression = createDisplayArray();
         if (currentExpression.length === 1) {
-            printDisplay(buttonValue, buttonClass);
-        } else if (isNaN(Number(currentExpression[1])) && typeof Number(currentExpression[2]) === 'number') {
-            convertDisplayValues();
-            printDisplay(buttonValue, buttonClass);
-        } else if (currentExpression.length === 2) {
-            replaceOperator(buttonValue);
+            printDisplay(buttonValue);
+        } else {
+            let splitExpression = currentExpression[1].split('');
+            if (splitExpression.length > 1) {
+                calculateDisplayValues();
+                printDisplay(buttonValue);
+            } else {
+                replaceOperator(buttonValue);
+            }
         }
     }
 }
 
+function createDisplayArray() {
+    return displayValues.split(/(?=[-+÷\×])/);
+}
+
 function replaceOperator(buttonValue) {
-    let currentExpression = displayValues.split(' ');
-    currentExpression.splice(-1, 1);
-    let newOperatorExpression = currentExpression.splice(-1, 1, buttonValue);
-    console.log(newOperatorExpression);
-    newOperatorExpression = newOperatorExpression.join(' ');
+    let currentExpression = createDisplayArray();
+    currentExpression.splice(1, 1, buttonValue);
+    newOperatorExpression = currentExpression.join('');
     screenDisplay.innerHTML = newOperatorExpression;
 }
 
-function convertDisplayValues() {
+function calculateDisplayValues() {
     console.log('runnign');
     let valuesArray = displayValues.split(' ');
     let firstValue = Number(valuesArray[0]);
