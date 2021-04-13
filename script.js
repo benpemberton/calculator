@@ -26,9 +26,15 @@ function operate(operator, ...args) {
     return operator(...args);
 }
 
-const screenDisplay = document.getElementById('screen').querySelector('p');
-let displayValues;
-let operationPairs = [];
+const screenDisplay = document.getElementById('main-display').querySelector('p');
+const currentOperation = document.getElementById('current-operation').querySelector('p');
+let operator;
+let displayValue = '';
+let currentTotal;
+let numberPressed;
+let operatorPressed;
+let calculation;
+let clear;
 
 
 buttons = document.querySelectorAll('.button');
@@ -37,74 +43,74 @@ buttons.forEach(node => node.addEventListener('click', input));
 function input(e) {
     let buttonValue = e.currentTarget.getAttribute('data-value');
     let buttonClass = e.currentTarget.getAttribute('class');
-    if (buttonClass === 'button function' || buttonClass === 'button operator') {
+    if (buttonClass === 'button function') {
+        numberPressed = false;
         runFunction(buttonValue, buttonClass);
-    } else {
+    } else if (buttonClass === 'button operator' && displayValue !== '')  {
+        operatorPressed = true;  
+        runOperator(buttonValue);
+        numberPressed = false;
+    } else if (buttonClass === 'button number') {
+        if (operatorPressed === true) {
+            operatorPressed = false;
+            screenDisplay.innerHTML = '';   
+        }
+        numberPressed = true;
         printDisplay(buttonValue);
     }
 }
 
-function printDisplay (buttonValue) {
-    screenDisplay.innerHTML += buttonValue;
-    displayValues = screenDisplay.innerHTML;
+function printDisplay(value, clear) {
+    if (clear) {
+        screenDisplay.innerHTML = value;
+        clear = 0;
+    } else {
+        screenDisplay.innerHTML += value;
+        displayValue = screenDisplay.innerHTML;
+    }
+}
+
+function printCurrent(buttonValue) {
+    currentOperation.innerHTML = displayValue + ' ' + buttonValue;
+}
+
+function runOperator(buttonValue) {      
+    if (operator === undefined || numberPressed === false) { 
+        printCurrent(buttonValue);
+        operator = buttonValue;
+    } else if (numberPressed === true) {
+        currentTotal = currentOperation.innerHTML.split(' ')[0];
+        calculateDisplayValue();
+        operator = buttonValue;
+        currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator;
+    }
 }
 
 function runFunction(buttonValue, buttonClass) {
     if (buttonValue === 'equals') {
-        calculateDisplayValues();
-    } else if (buttonClass === 'button operator') {
-        let currentExpression = createDisplayArray();
-        if (currentExpression.length === 1) {
-            printDisplay(buttonValue);
-        } else {
-            let splitExpression = currentExpression[1].split('');
-            if (splitExpression.length > 1) {
-                calculateDisplayValues();
-                printDisplay(buttonValue);
-            } else {
-                replaceOperator(buttonValue);
-            }
-        }
+        currentTotal = currentOperation.innerHTML.split(' ')[0];
+        calculateDisplayValue();
+        currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator;
     }
 }
 
-function createDisplayArray() {
-    return displayValues.split(/(?=[-+÷\×])/);
+function createExpArray(expression) {
+    return String(expression).split(/(?=[-+÷\×])/);
 }
 
-function replaceOperator(buttonValue) {
-    let currentExpression = createDisplayArray();
-    currentExpression.splice(1, 1, buttonValue);
-    newOperatorExpression = currentExpression.join('');
-    screenDisplay.innerHTML = newOperatorExpression;
-}
-
-function calculateDisplayValues() {
-    console.log('runnign');
-    let valuesArray = displayValues.split(' ');
-    let firstValue = Number(valuesArray[0]);
-    valuesArray.splice(0, 1);
-    operationPairs = valuesArray.reduce((array, currentItem, i) => {
-        if (isNaN(Number(currentItem))) {
-            array.push(valuesArray.slice(i, i + 2));
-        }
-        return array;
-    }, []);
-    let calculation = operationPairs.reduce((total, currentItem) => {
-        if (total === 0) {
-            total = firstValue;
-        }
-        let nextValue = Number(currentItem[1]);
-        
-        if (currentItem[0] === '÷') {
-            return total = operate(divide, total, nextValue);
-        } else if (currentItem[0] === '×') {
-            return total = operate(multiply, total, nextValue);
-        } else if (currentItem[0] === '-') {
-            return total = operate(subtract, total, nextValue);
-        } else if (currentItem[0] === '+') {
-            return total = operate(add, total, nextValue);
-        }
-    }, 0);
-    screenDisplay.innerHTML = calculation;
+function calculateDisplayValue() {
+    currentTotal = Number(currentTotal);
+    displayValue = Number(displayValue);
+    console.log(currentTotal+operator+displayValue);
+    if (operator === '÷') {
+        calculation = operate(divide, currentTotal, displayValue);
+    } else if (operator === '×') {
+        calculation = operate(multiply, currentTotal, displayValue);
+    } else if (operator === '-') {
+        calculation =  operate(subtract, currentTotal, displayValue);
+    } else if (operator === '+') {
+        calculation = operate(add, currentTotal, displayValue);
+    }
+    clear = 1;
+    printDisplay(calculation, clear);
 }

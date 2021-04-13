@@ -59,6 +59,8 @@ body {
 }
 
 #screen {
+    display: flex;
+    flex-direction: column;
     height: 130px;
     width: 100%;
     background-color: white;
@@ -66,7 +68,19 @@ body {
     border-radius: 5px;
     text-align: right;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 2.5em;
+}
+
+#current-operation {
+    flex-basis: 25%;
+    font-size: 1em;
+}
+
+#main-display {
+    flex-basis: 75%;
+}
+
+#main-display p {
+    font-size: 5em;
 }
 
 #buttons-grid {
