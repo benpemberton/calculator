@@ -46,9 +46,9 @@ function input(e) {
     if (buttonClass === 'button function') {
         numberPressed = 0;
         runFunction(buttonValue, buttonClass);
-    } else if (buttonClass === 'button operator' && displayValue !== '')  {
-        operatorPressed = 1;  
+    } else if (buttonClass === 'button operator' && displayValue !== '')  {  
         runOperator(buttonValue);
+        operatorPressed = 1;
         numberPressed = 0;
     } else if (buttonClass === 'button number') {
         if (operatorPressed) {
@@ -63,6 +63,7 @@ function input(e) {
 function printDisplay(value, clear) {
     if (clear) {
         screenDisplay.innerHTML = value;
+        displayValue = screenDisplay.innerHTML;
         clear = 0;
     } else {
         screenDisplay.innerHTML += value;
@@ -70,6 +71,7 @@ function printDisplay(value, clear) {
     }
     if (screenDisplay.innerHTML.length > 9) {
         screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, 9);
+        displayValue = screenDisplay.innerHTML;
     }
 }
 
@@ -114,13 +116,14 @@ function clearCalc() {
 }
 
 function backspace() {
-    screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1)
+    screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1);
+    displayValue = screenDisplay.innerHTML;
 }
 
 function equals() {
     currentTotal = currentOperation.innerHTML.split(' ')[0];
+    currentOperation.innerHTML = currentOperation.innerHTML + ' ' + displayValue;
     calculateDisplayValue();
-    currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator + ' ' +;
 }
 
 function calculateDisplayValue() {
