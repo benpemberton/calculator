@@ -62,7 +62,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 130px;
-    width: 100%;
+    width: auto;
     background-color: white;
     margin-bottom: 30px;
     border-radius: 5px;

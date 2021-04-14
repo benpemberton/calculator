@@ -68,6 +68,9 @@ function printDisplay(value, clear) {
         screenDisplay.innerHTML += value;
         displayValue = screenDisplay.innerHTML;
     }
+    if (screenDisplay.innerHTML.length > 9) {
+        screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, 9);
+    }
 }
 
 function printCurrent(buttonValue) {
@@ -88,14 +91,36 @@ function runOperator(buttonValue) {
 
 function runFunction(buttonValue, buttonClass) {
     if (buttonValue === 'equals') {
-        currentTotal = currentOperation.innerHTML.split(' ')[0];
-        calculateDisplayValue();
-        currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator;
+        equals();
+    }
+    if (buttonValue === 'clear') {
+        clearCalc();
+    }
+    if (buttonValue === 'delete') {
+        backspace();
     }
 }
 
-function createExpArray(expression) {
-    return String(expression).split(/(?=[-+÷\×])/);
+function clearCalc() {
+    operator = undefined;
+    displayValue = undefined;
+    currentTotal = undefined;
+    numberPressed = undefined;
+    operatorPressed = undefined;
+    calculation = undefined;
+    clear = undefined;
+    currentOperation.innerHTML = '';
+    screenDisplay.innerHTML = '';
+}
+
+function backspace() {
+    screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1)
+}
+
+function equals() {
+    currentTotal = currentOperation.innerHTML.split(' ')[0];
+    calculateDisplayValue();
+    currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator;
 }
 
 function calculateDisplayValue() {
