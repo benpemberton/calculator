@@ -44,18 +44,18 @@ function input(e) {
     let buttonValue = e.currentTarget.getAttribute('data-value');
     let buttonClass = e.currentTarget.getAttribute('class');
     if (buttonClass === 'button function') {
-        numberPressed = false;
+        numberPressed = 0;
         runFunction(buttonValue, buttonClass);
     } else if (buttonClass === 'button operator' && displayValue !== '')  {
-        operatorPressed = true;  
+        operatorPressed = 1;  
         runOperator(buttonValue);
-        numberPressed = false;
+        numberPressed = 0;
     } else if (buttonClass === 'button number') {
-        if (operatorPressed === true) {
-            operatorPressed = false;
+        if (operatorPressed) {
+            operatorPressed = 0;
             screenDisplay.innerHTML = '';   
         }
-        numberPressed = true;
+        numberPressed = 1;
         printDisplay(buttonValue);
     }
 }
@@ -78,10 +78,10 @@ function printCurrent(buttonValue) {
 }
 
 function runOperator(buttonValue) {      
-    if (operator === undefined || numberPressed === false) { 
+    if (!operator || !numberPressed) { 
         printCurrent(buttonValue);
         operator = buttonValue;
-    } else if (numberPressed === true) {
+    } else if (numberPressed) {
         currentTotal = currentOperation.innerHTML.split(' ')[0];
         calculateDisplayValue();
         operator = buttonValue;
@@ -120,7 +120,7 @@ function backspace() {
 function equals() {
     currentTotal = currentOperation.innerHTML.split(' ')[0];
     calculateDisplayValue();
-    currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator;
+    currentOperation.innerHTML = screenDisplay.innerHTML + ' ' + operator + ' ' +;
 }
 
 function calculateDisplayValue() {
