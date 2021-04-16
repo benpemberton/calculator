@@ -63,6 +63,7 @@ body {
     flex-direction: column;
     height: 130px;
     width: auto;
+    padding: 5px;
     background-color: white;
     margin-bottom: 30px;
     border-radius: 5px;

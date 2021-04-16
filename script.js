@@ -46,7 +46,7 @@ function input(e) {
     if (buttonClass === 'button function') {
         numberPressed = 0;
         runFunction(buttonValue, buttonClass);
-    } else if (buttonClass === 'button operator' && displayValue !== '')  {  
+    } else if (buttonClass === 'button operator' && displayValue)  {  
         runOperator(buttonValue);
         operatorPressed = 1;
         numberPressed = 0;
