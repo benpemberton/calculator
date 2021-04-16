@@ -1,31 +1,3 @@
-function add(...args) {
-    return args.reduce((previous, current) => {
-        return previous + current;
-    });
-}
-
-function subtract(...args) {
-    return args.reduce((previous, current) => {
-        return previous - current;
-    });
-}
-
-function multiply(...args) {
-    return args.reduce((previous, current) => {
-        return previous * current;
-    });
-}
-
-function divide(...args) {
-    return args.reduce((previous, current) => {
-        return previous / current;
-    });
-}
-
-function operate(operator, ...args) {
-    return operator(...args);
-}
-
 const screenDisplay = document.getElementById('main-display').querySelector('p');
 const currentOperation = document.getElementById('current-operation').querySelector('p');
 let operator;
@@ -38,11 +10,22 @@ let clear;
 
 
 buttons = document.querySelectorAll('.button');
-buttons.forEach(node => node.addEventListener('click', input));
+buttons.forEach(node => node.addEventListener('click', clickInput));
+window.addEventListener('keydown', keyInput)
 
-function input(e) {
-    let buttonValue = e.currentTarget.getAttribute('data-value');
-    let buttonClass = e.currentTarget.getAttribute('class');
+function clickInput(e) {
+    const button = e.currentTarget;
+    routeToButtons(button);
+}
+
+function keyInput(e) {
+    const button = document.querySelector(`button[data-key="${e.key}"]`);
+    routeToButtons(button);
+}
+
+function routeToButtons(button) {
+    let buttonValue = button.getAttribute('data-value');
+    let buttonClass = button.getAttribute('class');
     if (buttonClass === 'button function') {
         numberPressed = 0;
         runFunction(buttonValue, buttonClass);
@@ -141,4 +124,32 @@ function calculateDisplayValue() {
     }
     clear = 1;
     printDisplay(calculation, clear);
+}
+
+function add(...args) {
+    return args.reduce((previous, current) => {
+        return previous + current;
+    });
+}
+
+function subtract(...args) {
+    return args.reduce((previous, current) => {
+        return previous - current;
+    });
+}
+
+function multiply(...args) {
+    return args.reduce((previous, current) => {
+        return previous * current;
+    });
+}
+
+function divide(...args) {
+    return args.reduce((previous, current) => {
+        return previous / current;
+    });
+}
+
+function operate(operator, ...args) {
+    return operator(...args);
 }
