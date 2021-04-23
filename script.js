@@ -27,7 +27,6 @@ function routeToButtons(button) {
     let buttonValue = button.getAttribute('data-value');
     let buttonClass = button.getAttribute('class');
     if (buttonClass === 'button function') {
-        numberPressed = 0;
         runFunction(buttonValue, buttonClass);
     } else if (buttonClass === 'button operator' && displayValue)  {  
         runOperator(buttonValue);
@@ -104,9 +103,12 @@ function backspace() {
 }
 
 function equals() {
-    currentTotal = currentOperation.innerHTML.split(' ')[0];
-    currentOperation.innerHTML = currentOperation.innerHTML + ' ' + displayValue;
-    calculateDisplayValue();
+    if (operator) {
+        numberPressed = 0;
+        currentTotal = currentOperation.innerHTML.split(' ')[0];
+        currentOperation.innerHTML = currentOperation.innerHTML + ' ' + displayValue;
+        calculateDisplayValue();
+    }
 }
 
 function calculateDisplayValue() {
