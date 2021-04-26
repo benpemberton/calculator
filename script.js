@@ -151,7 +151,6 @@ function calculateDisplayValue() {
     } else {
         currentTotal = Number(currentTotal);
         displayValue = Number(displayValue);
-        console.log(currentTotal+operator+displayValue);
         if (operator === '÷') {
             calculation = operate(divide, currentTotal, displayValue);
         } else if (operator === '×') {
