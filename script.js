@@ -7,6 +7,7 @@ let numberPressed;
 let operatorPressed;
 let calculation;
 let clear;
+let byZero;
 
 
 buttons = document.querySelectorAll('.button');
@@ -24,6 +25,9 @@ function keyInput(e) {
 }
 
 function routeToButtons(button) {
+    if (byZero) {
+        clearCalc();
+    }
     let buttonValue = button.getAttribute('data-value');
     let buttonClass = button.getAttribute('class');
     if (buttonClass === 'button function') {
@@ -33,18 +37,20 @@ function routeToButtons(button) {
         operatorPressed = 1;
         numberPressed = 0;
     } else if (buttonClass === 'button number') {
-        if (currentOperation.innerHTML.split(' ').length === 3) {
-            clearCalc();
-            clear = 1;
-            printDisplay(buttonValue, clear);
-        } else if (!operatorPressed) {
-            printDisplay(buttonValue);
-        } else if (operatorPressed) {
-            operatorPressed = 0;
-            screenDisplay.innerHTML = '';
-            printDisplay(buttonValue);   
+        if (!checkForDecimal() || buttonValue !== '.') {
+            if (currentOperation.innerHTML.split(' ').length === 3) {
+                clearCalc();
+                clear = 1;
+                printDisplay(buttonValue, clear);
+            } else if (!operatorPressed) {
+                printDisplay(buttonValue);
+            } else if (operatorPressed) {
+                operatorPressed = 0;
+                screenDisplay.innerHTML = '';
+                printDisplay(buttonValue);   
+            }
+            numberPressed = 1;
         }
-        numberPressed = 1;
     }
 }
 
@@ -99,6 +105,7 @@ function clearCalc() {
     operatorPressed = undefined;
     calculation = undefined;
     clear = undefined;
+    byZero = undefined;
     currentOperation.innerHTML = '';
     screenDisplay.innerHTML = '';
 }
@@ -111,6 +118,12 @@ function backspace() {
         screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1);
         displayValue = screenDisplay.innerHTML;
     }
+}
+
+function checkForDecimal() {
+    const array = screenDisplay.innerHTML.split('');
+    const check = array.find(item => item === '.');
+    return check? true: false;
 }
 
 function equals() {
@@ -132,20 +145,25 @@ function equals() {
 }
 
 function calculateDisplayValue() {
-    currentTotal = Number(currentTotal);
-    displayValue = Number(displayValue);
-    console.log(currentTotal+operator+displayValue);
-    if (operator === '÷') {
-        calculation = operate(divide, currentTotal, displayValue);
-    } else if (operator === '×') {
-        calculation = operate(multiply, currentTotal, displayValue);
-    } else if (operator === '-') {
-        calculation =  operate(subtract, currentTotal, displayValue);
-    } else if (operator === '+') {
-        calculation = operate(add, currentTotal, displayValue);
+    if (operator === '÷' && Number(displayValue) === 0) {
+        screenDisplay.innerHTML = 'No thanks';
+        byZero = 1;
+    } else {
+        currentTotal = Number(currentTotal);
+        displayValue = Number(displayValue);
+        console.log(currentTotal+operator+displayValue);
+        if (operator === '÷') {
+            calculation = operate(divide, currentTotal, displayValue);
+        } else if (operator === '×') {
+            calculation = operate(multiply, currentTotal, displayValue);
+        } else if (operator === '-') {
+            calculation =  operate(subtract, currentTotal, displayValue);
+        } else if (operator === '+') {
+            calculation = operate(add, currentTotal, displayValue);
+        }
+        clear = 1;
+        printDisplay(calculation, clear);
     }
-    clear = 1;
-    printDisplay(calculation, clear);
 }
 
 function add(...args) {

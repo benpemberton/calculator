@@ -85,7 +85,7 @@ body {
 }
 
 #buttons-grid {
-    width: 400px;
+    width: 430px;
     height: 500px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
