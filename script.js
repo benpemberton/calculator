@@ -33,12 +33,18 @@ function routeToButtons(button) {
         operatorPressed = 1;
         numberPressed = 0;
     } else if (buttonClass === 'button number') {
-        if (operatorPressed) {
+        if (currentOperation.innerHTML.split(' ').length === 3) {
+            clearCalc();
+            clear = 1;
+            printDisplay(buttonValue, clear);
+        } else if (!operatorPressed) {
+            printDisplay(buttonValue);
+        } else if (operatorPressed) {
             operatorPressed = 0;
-            screenDisplay.innerHTML = '';   
+            screenDisplay.innerHTML = '';
+            printDisplay(buttonValue);   
         }
         numberPressed = 1;
-        printDisplay(buttonValue);
     }
 }
 
@@ -98,16 +104,30 @@ function clearCalc() {
 }
 
 function backspace() {
-    screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1);
-    displayValue = screenDisplay.innerHTML;
+    if (screenDisplay.innerHTML.split('').length === 1) {
+        screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1);
+        displayValue = currentOperation.innerHTML.split(' ')[0];
+    } else {
+        screenDisplay.innerHTML = screenDisplay.innerHTML.slice(0, -1);
+        displayValue = screenDisplay.innerHTML;
+    }
 }
 
 function equals() {
     if (operator) {
-        numberPressed = 0;
-        currentTotal = currentOperation.innerHTML.split(' ')[0];
-        currentOperation.innerHTML = currentOperation.innerHTML + ' ' + displayValue;
-        calculateDisplayValue();
+        if (currentOperation.innerHTML.split(' ').length === 3) {
+            numberPressed = 0;
+            currentTotal = screenDisplay.innerHTML;
+            displayValue = currentOperation.innerHTML.split(' ')[2]
+            currentOperation.innerHTML = currentTotal + ' ' + currentOperation.innerHTML.split(' ')[1] + ' ' + displayValue;
+            calculateDisplayValue();
+        } else {
+            numberPressed = 0;
+            currentTotal = currentOperation.innerHTML.split(' ')[0];
+            currentOperation.innerHTML = currentOperation.innerHTML + ' ' + displayValue;
+            calculateDisplayValue();
+        }
+        clear = 1;
     }
 }
 
